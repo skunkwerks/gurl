@@ -17,9 +17,7 @@
 package main
 
 import (
-	"bytes"
 	"crypto/tls"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -193,14 +191,7 @@ func main() {
 		httpreq.Body(body)
 	}
 	if len(stdin) > 0 {
-		var j interface{}
-		d := json.NewDecoder(bytes.NewReader(stdin))
-		d.UseNumber()
-		if err = d.Decode(&j); err != nil {
-			httpreq.Body(stdin)
-		} else if _, err = httpreq.JsonBody(j); err != nil {
-			log.Fatal("fail to read body from Stdin: ", err)
-		}
+		httpreq.Body(stdin)
 	}
 
 	// AB bench
