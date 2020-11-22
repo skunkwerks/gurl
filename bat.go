@@ -373,6 +373,7 @@ ITEM:
     Query string   key=value
     Header         key:value
     Post data      key=value
+    JSON data      key:=value
     File upload    key@/path/file
 
 Example:
