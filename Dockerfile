@@ -1,7 +1,7 @@
 FROM golang:1.8
 
-ADD . /go/src/github.com/astaxie/bat
+ADD . /go/src/github.com/skunkwerks/gurl
 
-RUN go install github.com/astaxie/bat
+RUN go install github.com/skunkwerks/gurl
 
-ENTRYPOINT ["/go/bin/bat"]
+ENTRYPOINT ["/go/bin/gurl"]
