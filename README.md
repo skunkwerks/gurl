@@ -5,7 +5,7 @@ testing, debugging, and generally interacting with HTTP servers.
 
 Forked from [bat](https://github.com/astaxie/bat), as bugs weren't being
 fixed. Profound thanks for their contributions! Inspired by
-[Httpie](https://github.com/jakubroztocil/httpie). Thanks to the author,
+[httpie](https://github.com/jakubroztocil/httpie). Thanks to the author,
 Jakub.
 
 ![](images/logo.png)
@@ -297,12 +297,12 @@ To set custom headers you can use the Header:Value notation:
 	User-Agent: Bacon/1.0
 	X-Foo: Bar
 	
-There are a couple of default headers that bat sets:
+There are a couple of default headers that gurl sets:
 
 	GET / HTTP/1.1
 	Accept: */*
 	Accept-Encoding: gzip, deflate
-	User-Agent: bat/<version>
+	User-Agent: gurl/<version>
 	Host: <taken-from-URL>
 
 Any of the default headers can be overridden.

@@ -12,12 +12,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/astaxie/bat/httplib"
+	"github.com/skunkwerks/gurl/httplib"
 )
 
 var defaultSetting = httplib.BeegoHttpSettings{
 	ShowDebug:        true,
-	UserAgent:        "bat/" + version,
+	UserAgent:        "gurl/" + version,
 	ConnectTimeout:   60 * time.Second,
 	ReadWriteTimeout: 60 * time.Second,
 	Gzip:             true,

@@ -1,4 +1,5 @@
 // Copyright 2015 bat authors
+// Copyright 2020 gurl authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -12,8 +13,8 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-// Bat is a Go implemented CLI cURL-like tool for humans
-// bat [flags] [METHOD] URL [ITEM [ITEM]]
+// Gurl is a Go implemented CLI cURL-like tool for humans
+// Gurl [flags] [METHOD] URL [ITEM [ITEM]]
 package main
 
 import (
@@ -33,7 +34,7 @@ import (
 )
 
 const (
-	version              = "0.1.1"
+	version              = "0.2.0"
 	printReqHeader uint8 = 1 << (iota - 1)
 	printReqBody
 	printRespHeader
@@ -337,11 +338,14 @@ func main() {
 	}
 }
 
-var usageinfo string = `bat is a Go implemented CLI cURL-like tool for humans.
+var usageinfo string = `Gurl is a Go implemented CLI cURL-like tool for humans,
+originally developed by https://github.com/astaxie/bat but forked to
+pick up critical JSON and header related patches, and avoid conflicting with
+other common tools, also named bat.
 
 Usage:
 
-	bat [flags] [METHOD] URL [ITEM [ITEM]]
+	gurl [flags] [METHOD] URL [ITEM [ITEM]]
 
 flags:
   -a, -auth=USER[:PASS]       Pass a username:password pair as the argument
@@ -362,7 +366,7 @@ flags:
   -v, -version=true           Show Version Number
 
 METHOD:
-  bat defaults to either GET (if there is no request data) or POST (with request data).
+  gurl defaults to either GET (if there is no request data) or POST (with request data).
 
 URL:
   The only information needed to perform a request is a URL. The default scheme is http://,
@@ -378,9 +382,9 @@ ITEM:
 
 Example:
 
-	bat beego.me
+	gurl beego.me
 
-more help information please refer to https://github.com/astaxie/bat
+For more help & information please refer to https://github.com/skunkwerks/gurl
 `
 
 func usage() {
