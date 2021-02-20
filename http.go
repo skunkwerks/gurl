@@ -102,7 +102,7 @@ func getHTTP(method string, url string, args []string) (r *httplib.BeegoHttpRequ
 	if !form && len(jsonmap) > 0 {
 		_, err := r.JsonBody(jsonmap)
 		if err != nil {
-			log.Fatal("fail to marshal json: ", err)
+			log.Fatal("fail to marshal JSON: ", err)
 		}
 	}
 	return
@@ -122,7 +122,7 @@ func formatResponseBody(res *http.Response, httpreq *httplib.BeegoHttpRequest, p
 		var output bytes.Buffer
 		err := json.Indent(&output, body, "", "  ")
 		if err != nil {
-			log.Fatal("Response Json Indent: ", err)
+			log.Fatal("Response JSON Indent: ", err)
 		}
 
 		return output.String()
