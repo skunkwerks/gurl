@@ -1,5 +1,5 @@
 // Copyright 2015 bat authors
-// Copyright 2020 gurl authors
+// Copyright 2020-2021 gurl authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License"): you may
 // not use this file except in compliance with the License. You may obtain
@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	version              = "0.2.1"
+	version              = "0.2.2"
 	printReqHeader uint8 = 1 << (iota - 1)
 	printReqBody
 	printRespHeader
