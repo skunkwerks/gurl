@@ -31,6 +31,8 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+
+	"github.com/skunkwerks/gurl/hamac"
 )
 
 const (
@@ -55,6 +57,8 @@ var (
 	bench            bool
 	benchN           int
 	benchC           int
+	hmac             hamac.Hmac
+	hmacEnv          string
 	isjson           = flag.Bool("json", true, "Send the data as a JSON object")
 	method           = flag.String("method", "GET", "HTTP method")
 	URL              = flag.String("url", "", "HTTP request URL")
@@ -82,6 +86,7 @@ func init() {
 	flag.IntVar(&benchN, "b.N", 1000, "Number of requests to run")
 	flag.IntVar(&benchC, "b.C", 100, "Number of requests to run concurrently.")
 	flag.StringVar(&body, "body", "", "Raw data send as body")
+	flag.StringVar(&hmacEnv, "hmac", "", "name of env var to retrieve HMAC details")
 	jsonmap = make(map[string]interface{})
 }
 
@@ -355,6 +360,7 @@ flags:
   -body=""                    Send RAW data as body
   -f, -form=false             Submitting the data as a form
   -j, -json=true              Send the data in a JSON object
+  -hmac=HMAC_ENV_VAR          Environment variable to fetch HMAC details from
   -p, -pretty=true            Print JSON Pretty Format
   -i, -insecure=false         Allow connections to SSL sites without certs
   -proxy=PROXY_URL            Proxy with host and port
@@ -375,6 +381,10 @@ URL:
   The only information needed to perform a request is a URL. The default
   scheme is http://, which can be omitted from the argument; example.org
   works just fine.
+
+HMAC:
+  gurl supports adding an HTTP header containing the HMAC signature of
+  the body.
 
 ITEM:
   Can be any of:
