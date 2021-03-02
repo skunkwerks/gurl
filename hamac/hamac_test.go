@@ -84,3 +84,49 @@ func TestMacs(t *testing.T) {
 		}
 	}
 }
+
+func TestSignedHeaders(t *testing.T) {
+	t.Parallel()
+	testCases := []struct {
+		name string
+		mac  hamac.Hmac
+		want string
+	}{
+		// generate these hashes via:
+		// printf 'content' | openssl dgst -sha256 -hmac squirrel
+		{
+			name: "sha256 test",
+			want: "sha256=82134a1023b182184567609ca9c7dd1c3f0c875fbfff9ad876664f78d5ec2f8d",
+			mac: hamac.Hmac{
+				Enabled:   true,
+				Algorithm: hamac.Sha256,
+				Header:    "x-lol",
+				Secret:    "squirrel"},
+		},
+		{
+			name: "sha512 test",
+			want: "sha512=f0a6e25b31bccdfcf75ab00918838c2fcf7d5c6c498da23fbf09276f375d0d38d4f18c06ffb3f02e6e4123040b2b6845f96b5afc6b071648d5909e33e4bb430f",
+			mac: hamac.Hmac{
+				Enabled:   true,
+				Algorithm: hamac.Sha512,
+				Header:    "x-cabal",
+				Secret:    "squirrel"},
+		},
+		{
+			name: "empty test",
+			want: "",
+			mac:  hamac.Hmac{Enabled: false},
+		},
+	}
+
+	body := []byte("content")
+
+	for _, tc := range testCases {
+
+		got := hamac.Sign(tc.mac, []byte(body))
+
+		if !cmp.Equal([]byte(tc.want), got) {
+			t.Errorf("%v: diff %v", tc.name, cmp.Diff(tc.want, string(got)))
+		}
+	}
+}
