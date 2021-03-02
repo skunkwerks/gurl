@@ -22,6 +22,7 @@ Jakub.
 - [Forms](#forms)
 - [HTTP Headers](#http-headers)
 - [Authentication](#authentication)
+- [Signatures](#signatures)
 - [Proxies](#proxies)
 
 ## Main Features
@@ -29,7 +30,7 @@ Jakub.
 - Expressive and intuitive syntax
 - Built-in JSON support
 - Forms and file uploads
-- HTTPS, proxies, and authentication
+- HTTPS, proxies, signatures, and authentication
 - Arbitrary request data
 - Custom headers
 
@@ -311,6 +312,25 @@ There are a couple of default headers that gurl sets:
 	Host: <taken-from-URL>
 
 Any of the default headers can be overridden.
+
+## HMAC Signatures
+
+HMAC signatures are provided only over the body content, not query
+parameters, and obviously not headers themselves. Thus, you can only
+guarantee authenticity and unaltered content over the body. Do not
+use this property and assume that headers or query parameters can be
+trusted.
+
+Include a custom HMAC signature header from an environment variable:
+
+	$ export HMAC=sha256:x-hub-signature:very_secret
+	$ gurl -hmac=HMAC httpbin.org/post key=value
+	...
+	x-hub-signature: sha256=ac4e6fc055a6f51a43fa3868c3af06e382867bf25be59702b38f236466b19df3
+	{"key":"value"}
+
+	 HMAC signatures can be verified manually using:
+		printf 'data' | openssl dgst -sha256 -hmac <secret> -out -
 
 # Authentication
 Basic auth:
