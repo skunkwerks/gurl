@@ -31,7 +31,7 @@ type Hmac struct {
 // used to check if slice only contains legitimate RFC-style characters
 var validHeader = regexp.MustCompile(`(?i)^x-[a-z0-9_-]+$`)
 
-// hmac will be enabled if all parameters are present and valid
+// New hmac will be enabled if all parameters are present and valid
 func New(input string) Hmac {
 	params := strings.Split(input, ":")
 	if len(params) != 3 {
@@ -67,4 +67,45 @@ func New(input string) Hmac {
 		hmac.Enabled = false
 	}
 	return hmac
+}
+
+// Sign takes an Hmac (with secret, algorithm, and expected header), and
+// a body, and returns an HTTP header, similar to GitHub and GitLab
+// HMACs for authenticating the body, via HTTP header envelope.
+// see https://tools.ietf.org/html/draft-cavage-http-signatures-10 or a
+// later revision for more details on the proposed RFC specification.
+func Sign(mac Hmac, body []byte) []byte {
+
+	if !mac.Enabled {
+		return []byte("")
+	}
+
+	var fn func() hash.Hash
+	var alg string
+
+	switch mac.Algorithm {
+	case Sha1:
+		fn = sha1.New
+		alg = "sha1"
+	case Sha512:
+		fn = sha512.New
+		alg = "sha512"
+	default:
+		fn = sha256.New
+		alg = "sha256"
+	}
+
+	macFn := hmac.New(fn, []byte(mac.Secret))
+	macFn.Write(body)
+	hash := hex.EncodeToString(macFn.Sum(nil))
+
+	// build required header by appending strings together
+	httpHeader := strings.Join(
+		[]string{
+			alg,
+			"=",
+			hash},
+		"")
+
+	return []byte(httpHeader)
 }
