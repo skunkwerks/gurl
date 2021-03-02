@@ -338,10 +338,10 @@ func main() {
 	}
 }
 
-var usageinfo string = `Gurl is a Go implemented CLI cURL-like tool for humans,
+var usageinfo string = `gurl is a Go implemented CLI cURL-like tool for humans,
 originally developed by https://github.com/astaxie/bat but forked to
-pick up critical JSON and header related patches, and avoid conflicting with
-other common tools, also named bat.
+pick up critical JSON and header related patches, and avoid conflicting
+with other common tools, also named bat.
 
 Usage:
 
@@ -358,7 +358,9 @@ flags:
   -p, -pretty=true            Print JSON Pretty Format
   -i, -insecure=false         Allow connections to SSL sites without certs
   -proxy=PROXY_URL            Proxy with host and port
-  -print="A"                  String specifying what the output should contain, default will print all information
+  -print="..."                String specifying what the output should
+                              contain, default will print all information.
+         "A" all request & response headers and bodies
          "H" request headers
          "B" request body
          "h" response headers
@@ -366,11 +368,13 @@ flags:
   -v, -version=true           Show Version Number
 
 METHOD:
-  gurl defaults to either GET (if there is no request data) or POST (with request data).
+  gurl defaults to either GET (if there is no request data) or POST
+  (with request data).
 
 URL:
-  The only information needed to perform a request is a URL. The default scheme is http://,
-  which can be omitted from the argument; example.org works just fine.
+  The only information needed to perform a request is a URL. The default
+  scheme is http://, which can be omitted from the argument; example.org
+  works just fine.
 
 ITEM:
   Can be any of:

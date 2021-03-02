@@ -89,7 +89,9 @@ Set a custom Host header to work around missing DNS records:
 
 	$ gurl localhost:8000 Host:example.com
 	
-Following is the detailed documentation. It covers the command syntax, advanced usage, and also features additional examples.
+
+Following is the detailed documentation. It covers the command syntax,
+advanced usage, and also features additional examples.
 	
 ## HTTP Method
 
@@ -101,7 +103,8 @@ which looks similar to the actual Request-Line that is sent:
 
 DELETE /todos/7 HTTP/1.1
 
-When the METHOD argument is omitted from the command, gurl defaults to either GET (if there is no request data) or POST (with request data).
+When the METHOD argument is omitted from the command, gurl defaults to
+either GET (if there is no request data) or POST (with request data).
 
 ## Request URL
 
@@ -158,7 +161,9 @@ type is distinguished only by the separator used: `:`, `=`, `:=`, `@`,
 |Form Fields from file `field=@file.txt`|read content from file as value|
 |Raw JSON fields `field:=json`, `field:=@file.json`|Useful when sending JSON and one or more fields need to be a Boolean, Number, nested Object, or an Array, e.g., meals:='["ham","spam"]' or pies:=[1,2,3] (note the quotes).|
 
-You can use `\` to escape characters that shouldn't be used as separators (or parts thereof). For instance, foo\==bar will become a data key/value pair (foo= and bar) instead of a URL parameter.
+You can use `\` to escape characters that shouldn't be used as
+separators (or parts thereof). For instance, foo\==bar will become a
+data key/value pair (foo= and bar) instead of a URL parameter.
 
 You can also quote values, e.g. `foo="bar baz"`.
 ## JSON
