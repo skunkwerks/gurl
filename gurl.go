@@ -384,7 +384,14 @@ URL:
 
 HMAC:
   gurl supports adding an HTTP header containing the HMAC signature of
-  the body.
+  the body. The default algorithm is sha256, also supported are sha512, sha1.
+
+  To simplify using different secrets, the only flag is the name of an
+  environment variable, which contains the algorithm, required header, and
+  secret, concatenated together, and separated by :.
+
+  sha256:x-my-signature:very_secret
+  sha1:x-most-wanted-header:bonnie_and_clyde
 
 ITEM:
   Can be any of:
