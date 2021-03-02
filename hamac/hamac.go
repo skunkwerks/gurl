@@ -1,14 +1,29 @@
 package hamac
 
 import (
+	"crypto/hmac"
+	"crypto/sha1"
+	"crypto/sha256"
+	"crypto/sha512"
+	"encoding/hex"
+	"hash"
 	"regexp"
 	"strings"
+)
+
+// restricted set of algorithms
+type Algorithm int
+
+const (
+	Sha1 Algorithm = iota
+	Sha256
+	Sha512
 )
 
 // struct to hold validated hmac parameters and an overall enabled flag
 type Hmac struct {
 	Enabled   bool
-	Algorithm string
+	Algorithm Algorithm
 	Header    string
 	Secret    string
 }
@@ -32,11 +47,11 @@ func New(input string) Hmac {
 
 	switch alg {
 	case "sha1":
-		hmac.Algorithm = alg
+		hmac.Algorithm = Sha1
 	case "sha512":
-		hmac.Algorithm = alg
+		hmac.Algorithm = Sha512
 	default:
-		hmac.Algorithm = "sha256"
+		hmac.Algorithm = Sha256
 	}
 
 	if validHeader.MatchString(header) {
