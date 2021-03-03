@@ -51,6 +51,8 @@ import (
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/skunkwerks/gurl/hamac"
 )
 
 var defaultSetting = BeegoHttpSettings{false, "beegoServer", 60 * time.Second, 60 * time.Second, nil, nil, nil, false, true, true}
@@ -267,6 +269,16 @@ func (b *BeegoHttpRequest) Param(key, value string) *BeegoHttpRequest {
 
 func (b *BeegoHttpRequest) PostFile(formname, filename string) *BeegoHttpRequest {
 	b.files[formname] = filename
+	return b
+}
+
+// SignBody calculates the HMAC and appends the header to the request
+// The body is re-injected into the request as ReadAll consumes it.
+func (b *BeegoHttpRequest) SignBody(mac hamac.Hmac) *BeegoHttpRequest {
+	body, _ := ioutil.ReadAll(b.req.Body)
+	signature := string(hamac.Sign(mac, body))
+	b.req.Header.Set(mac.Header, signature)
+	b.req.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 	return b
 }
 
