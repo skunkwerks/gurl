@@ -57,7 +57,6 @@ var (
 	bench            bool
 	benchN           int
 	benchC           int
-	hmac             hamac.Hmac
 	hmacEnv          string
 	isjson           = flag.Bool("json", true, "Send the data as a JSON object")
 	method           = flag.String("method", "GET", "HTTP method")
@@ -116,18 +115,24 @@ func main() {
 	flag.Usage = usage
 	flag.Parse()
 	args := flag.Args()
+
 	if len(args) > 0 {
 		args = filter(args)
 	}
+
 	if ver {
 		fmt.Println("Version:", version)
 		os.Exit(2)
 	}
+
 	parsePrintOption(printV)
 	if printOption&printReqBody != printReqBody {
 		defaultSetting.DumpBody = false
 	}
+
+	// read stdin into memory in single pass
 	var stdin []byte
+
 	if runtime.GOOS != "windows" {
 		fi, err := os.Stdin.Stat()
 		if err != nil {
@@ -193,11 +198,20 @@ func main() {
 		}
 		httpreq.SetProxy(http.ProxyURL(eurl))
 	}
+
+	// set body if supplied, or via stdin
 	if body != "" {
 		httpreq.Body(body)
 	}
 	if len(stdin) > 0 {
 		httpreq.Body(stdin)
+	}
+
+	// request body has now been finalised
+	// If HMAC was requested, sign body, & wrap signature as envelope
+	mac := hamac.New(os.Getenv(hmacEnv))
+	if mac.Enabled {
+		httpreq.SignBody(mac)
 	}
 
 	// AB bench
@@ -206,6 +220,7 @@ func main() {
 		RunBench(httpreq)
 		return
 	}
+
 	res, err := httpreq.Response()
 	if err != nil {
 		log.Fatalln("can't get the url", err)
