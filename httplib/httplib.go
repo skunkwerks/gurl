@@ -39,7 +39,6 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"io"
-	"io/ioutil"
 	"log"
 	"mime/multipart"
 	"net"
@@ -275,10 +274,10 @@ func (b *BeegoHttpRequest) PostFile(formname, filename string) *BeegoHttpRequest
 // SignBody calculates the HMAC and appends the header to the request
 // The body is re-injected into the request as ReadAll consumes it.
 func (b *BeegoHttpRequest) SignBody(mac hamac.Hmac) *BeegoHttpRequest {
-	body, _ := ioutil.ReadAll(b.req.Body)
+	body, _ := io.ReadAll(b.req.Body)
 	signature := string(hamac.Sign(mac, body))
 	b.req.Header.Set(mac.Header, signature)
-	b.req.Body = ioutil.NopCloser(bytes.NewBuffer(body))
+	b.req.Body = io.NopCloser(bytes.NewBuffer(body))
 	return b
 }
 
@@ -288,11 +287,11 @@ func (b *BeegoHttpRequest) Body(data interface{}) *BeegoHttpRequest {
 	switch t := data.(type) {
 	case string:
 		bf := bytes.NewBufferString(t)
-		b.req.Body = ioutil.NopCloser(bf)
+		b.req.Body = io.NopCloser(bf)
 		b.req.ContentLength = int64(len(t))
 	case []byte:
 		bf := bytes.NewBuffer(t)
-		b.req.Body = ioutil.NopCloser(bf)
+		b.req.Body = io.NopCloser(bf)
 		b.req.ContentLength = int64(len(t))
 	}
 	return b
@@ -306,7 +305,7 @@ func (b *BeegoHttpRequest) JsonBody(obj interface{}) (*BeegoHttpRequest, error) 
 		if err := enc.Encode(obj); err != nil {
 			return b, err
 		}
-		b.req.Body = ioutil.NopCloser(buf)
+		b.req.Body = io.NopCloser(buf)
 		b.req.ContentLength = int64(buf.Len())
 		b.req.Header.Set("Content-Type", "application/json")
 	}
@@ -354,7 +353,7 @@ func (b *BeegoHttpRequest) buildUrl(paramBody string) {
 				pw.Close()
 			}()
 			b.Header("Content-Type", bodyWriter.FormDataContentType())
-			b.req.Body = ioutil.NopCloser(pr)
+			b.req.Body = io.NopCloser(pr)
 			return
 		}
 
@@ -481,9 +480,9 @@ func (b *BeegoHttpRequest) Bytes() ([]byte, error) {
 		if err != nil {
 			return nil, err
 		}
-		b.body, err = ioutil.ReadAll(reader)
+		b.body, err = io.ReadAll(reader)
 	} else {
-		b.body, err = ioutil.ReadAll(resp.Body)
+		b.body, err = io.ReadAll(resp.Body)
 	}
 	if err != nil {
 		return nil, err
