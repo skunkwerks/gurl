@@ -35,7 +35,7 @@ import (
 )
 
 const (
-	version              = "0.2.2"
+	version              = "0.2.3"
 	printReqHeader uint8 = 1 << (iota - 1)
 	printReqBody
 	printRespHeader
@@ -373,7 +373,7 @@ flags:
   -b.C=100                    Number of requests to run concurrently
   -body=""                    Send RAW data as body
   -f, -form=false             Submitting the data as a form
-  -j, -json=true              Send the data in a JSON object
+  -j, -json=true              Send the data in a JSON object as application/json
   -hmac=HMAC_ENV_VAR          Environment variable to fetch HMAC details from
   -p, -pretty=true            Print JSON Pretty Format
   -i, -insecure=false         Allow connections to SSL sites without certs

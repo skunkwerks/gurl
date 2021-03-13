@@ -30,6 +30,7 @@ func getHTTP(method string, url string, args []string) (r *httplib.BeegoHttpRequ
 	r.Header("Accept-Encoding", "gzip, deflate")
 	if *isjson {
 		r.Header("Accept", "application/json")
+		r.Header("Content-Type", "application/json")
 	} else if form || method == "GET" {
 		r.Header("Accept", "*/*")
 	} else {
