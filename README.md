@@ -36,7 +36,7 @@ Jakub.
 
 ## Installation
 
-	go get -u github.com/skunkwerks/gurl
+	go install -v github.com/skunkwerks/gurl@latest
 	
 make sure the `$GOPATH/bin` is added into `$PATH`
 
@@ -44,7 +44,7 @@ make sure the `$GOPATH/bin` is added into `$PATH`
 
 Hello World:
 
-	$ gurl beego.me
+	$ gurl example.org
 
 Synopsis:
 
