@@ -15,14 +15,139 @@
 package httplib
 
 import (
-	"io"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"strings"
 	"testing"
 )
 
+// Test server setup
+func setupTestServer() *httptest.Server {
+	mux := http.NewServeMux()
+	
+	// GET handlers
+	mux.HandleFunc("/get", func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"args": map[string]string{},
+			"headers": r.Header,
+			"origin": "127.0.0.1",
+			"url": "http://localhost/get",
+		})
+	})
+
+	mux.HandleFunc("/ip", func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"origin": "127.0.0.1",
+		})
+	})
+
+	// POST handler
+	mux.HandleFunc("/post", func(w http.ResponseWriter, r *http.Request) {
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"args": map[string]string{},
+			"data": "",
+			"files": map[string]string{},
+			"form": r.PostForm,
+			"headers": r.Header,
+			"json": nil,
+			"origin": "127.0.0.1",
+			"url": "http://localhost/post",
+		})
+	})
+
+	// PUT handler
+	mux.HandleFunc("/put", func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"args": map[string]string{},
+			"data": "",
+			"files": map[string]string{},
+			"form": map[string]string{},
+			"headers": r.Header,
+			"json": nil,
+			"origin": "127.0.0.1",
+			"url": "http://localhost/put",
+		})
+	})
+
+	// DELETE handler
+	mux.HandleFunc("/delete", func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"args": map[string]string{},
+			"data": "",
+			"files": map[string]string{},
+			"form": map[string]string{},
+			"headers": r.Header,
+			"json": nil,
+			"origin": "127.0.0.1",
+			"url": "http://localhost/delete",
+		})
+	})
+
+	// Basic auth handler
+	mux.HandleFunc("/basic-auth/", func(w http.ResponseWriter, r *http.Request) {
+		user, pass, ok := r.BasicAuth()
+		if !ok || user != "user" || pass != "passwd" {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"authenticated": true,
+			"user": user,
+		})
+	})
+
+	// Headers handler
+	mux.HandleFunc("/headers", func(w http.ResponseWriter, r *http.Request) {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"headers": r.Header,
+		})
+	})
+
+	// Cookie handlers
+	mux.HandleFunc("/cookies/set", func(w http.ResponseWriter, r *http.Request) {
+		http.SetCookie(w, &http.Cookie{
+			Name: "k1",
+			Value: r.URL.Query().Get("k1"),
+		})
+		http.Redirect(w, r, "/cookies", http.StatusFound)
+	})
+
+	mux.HandleFunc("/cookies", func(w http.ResponseWriter, r *http.Request) {
+		cookies := map[string]string{}
+		for _, cookie := range r.Cookies() {
+			cookies[cookie.Name] = cookie.Value
+		}
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"cookies": cookies,
+		})
+	})
+
+	return httptest.NewServer(mux)
+}
+
+var ts *httptest.Server
+
+func TestMain(m *testing.M) {
+	// Setup
+	ts = setupTestServer()
+	defer ts.Close()
+	
+	// Run tests
+	code := m.Run()
+	
+	// Exit
+	os.Exit(code)
+}
+
 func TestResponse(t *testing.T) {
-	req := Get("http://httpbin.org/get")
+	req := Get(ts.URL + "/get")
 	resp, err := req.Response()
 	if err != nil {
 		t.Fatal(err)
@@ -31,7 +156,7 @@ func TestResponse(t *testing.T) {
 }
 
 func TestGet(t *testing.T) {
-	req := Get("http://httpbin.org/get")
+	req := Get(ts.URL + "/get")
 	b, err := req.Bytes()
 	if err != nil {
 		t.Fatal(err)
@@ -51,7 +176,7 @@ func TestGet(t *testing.T) {
 
 func TestSimplePost(t *testing.T) {
 	v := "smallfish"
-	req := Post("http://httpbin.org/post")
+	req := Post(ts.URL + "/post")
 	req.Param("username", v)
 
 	str, err := req.String()
@@ -86,7 +211,7 @@ func TestSimplePost(t *testing.T) {
 //}
 
 func TestSimplePut(t *testing.T) {
-	str, err := Put("http://httpbin.org/put").String()
+	str, err := Put(ts.URL + "/put").String()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -94,7 +219,7 @@ func TestSimplePut(t *testing.T) {
 }
 
 func TestSimpleDelete(t *testing.T) {
-	str, err := Delete("http://httpbin.org/delete").String()
+	str, err := Delete(ts.URL + "/delete").String()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -103,13 +228,13 @@ func TestSimpleDelete(t *testing.T) {
 
 func TestWithCookie(t *testing.T) {
 	v := "smallfish"
-	str, err := Get("http://httpbin.org/cookies/set?k1=" + v).SetEnableCookie(true).String()
+	str, err := Get(ts.URL + "/cookies/set?k1=" + v).SetEnableCookie(true).String()
 	if err != nil {
 		t.Fatal(err)
 	}
 	t.Log(str)
 
-	str, err = Get("http://httpbin.org/cookies").SetEnableCookie(true).String()
+	str, err = Get(ts.URL + "/cookies").SetEnableCookie(true).String()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -122,7 +247,7 @@ func TestWithCookie(t *testing.T) {
 }
 
 func TestWithBasicAuth(t *testing.T) {
-	str, err := Get("http://httpbin.org/basic-auth/user/passwd").SetBasicAuth("user", "passwd").String()
+	str, err := Get(ts.URL + "/basic-auth/user/passwd").SetBasicAuth("user", "passwd").String()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -135,7 +260,7 @@ func TestWithBasicAuth(t *testing.T) {
 
 func TestWithUserAgent(t *testing.T) {
 	v := "beego"
-	str, err := Get("http://httpbin.org/headers").SetUserAgent(v).String()
+	str, err := Get(ts.URL + "/headers").SetUserAgent(v).String()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -155,7 +280,7 @@ func TestWithSetting(t *testing.T) {
 	setting.Transport = nil
 	SetDefaultSetting(setting)
 
-	str, err := Get("http://httpbin.org/get").String()
+	str, err := Get(ts.URL + "/get").String()
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -168,7 +293,7 @@ func TestWithSetting(t *testing.T) {
 }
 
 func TestToJson(t *testing.T) {
-	req := Get("http://httpbin.org/ip")
+	req := Get(ts.URL + "/ip")
 	resp, err := req.Response()
 	if err != nil {
 		t.Fatal(err)
@@ -193,20 +318,23 @@ func TestToJson(t *testing.T) {
 
 func TestToFile(t *testing.T) {
 	f := "beego_testfile"
-	req := Get("http://httpbin.org/ip")
+	req := Get(ts.URL + "/ip")
 	err := req.ToFile(f)
 	if err != nil {
 		t.Fatal(err)
 	}
 	defer os.Remove(f)
-	b, err := io.ReadFile(f)
-	if n := strings.Index(string(b), "origin"); n == -1 {
+	b, err := os.ReadFile(f)
+	if err != nil {
 		t.Fatal(err)
+	}
+	if n := strings.Index(string(b), "origin"); n == -1 {
+		t.Fatal("response does not contain 'origin' field")
 	}
 }
 
 func TestHeader(t *testing.T) {
-	req := Get("http://httpbin.org/headers")
+	req := Get(ts.URL + "/headers")
 	req.Header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36")
 	str, err := req.String()
 	if err != nil {
