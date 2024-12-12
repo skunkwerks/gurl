@@ -46,7 +46,7 @@ func ColorfulRequest(str string) string {
 		substr[1] = Color(strings.Join(substr[1:], ":"), Cyan)
 		lines[i+1] = strings.Join(substr[:2], ":")
 	}
-	return strings.Join(lines, "\n")
+	return strings.Join(lines, "\n") + "\n"
 }
 
 func ColorfulResponse(str, contenttype string) string {
@@ -81,6 +81,7 @@ func ColorfulJson(str string) string {
 			key = false
 			val = false
 			rsli = append(rsli, char)
+			rsli = append(rsli, '\n')
 		case '"':
 			if startsemicolon && prev == '\\' {
 				rsli = append(rsli, char)
