@@ -18,18 +18,18 @@
 //
 // import "github.com/astaxie/beego/httplib"
 //
-//	b := httplib.Post("http://beego.me/")
-//	b.Param("username","astaxie")
-//	b.Param("password","123456")
-//	b.PostFile("uploadfile1", "httplib.pdf")
-//	b.PostFile("uploadfile2", "httplib.txt")
-//	str, err := b.String()
-//	if err != nil {
-//		t.Fatal(err)
-//	}
-//	fmt.Println(str)
+//		b := httplib.Post("http://beego.me/")
+//		b.Param("username","astaxie")
+//		b.Param("password","123456")
+//		b.PostFile("uploadfile1", "httplib.pdf")
+//		b.PostFile("uploadfile2", "httplib.txt")
+//		str, err := b.String()
+//		if err != nil {
+//			t.Fatal(err)
+//		}
+//		fmt.Println(str)
 //
-//  more docs http://beego.me/docs/module/httplib.md
+//	 more docs http://beego.me/docs/module/httplib.md
 package httplib
 
 import (
@@ -251,9 +251,9 @@ func (b *BeegoHttpRequest) SetTransport(transport http.RoundTripper) *BeegoHttpR
 // example:
 //
 //	func(req *http.Request) (*url.URL, error) {
-// 		u, _ := url.ParseRequestURI("http://127.0.0.1:8118")
-// 		return u, nil
-// 	}
+//		u, _ := url.ParseRequestURI("http://127.0.0.1:8118")
+//		return u, nil
+//	}
 func (b *BeegoHttpRequest) SetProxy(proxy func(*http.Request) (*url.URL, error)) *BeegoHttpRequest {
 	b.setting.Proxy = proxy
 	return b

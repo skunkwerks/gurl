@@ -26,14 +26,14 @@ import (
 // Test server setup
 func setupTestServer() *httptest.Server {
 	mux := http.NewServeMux()
-	
+
 	// GET handlers
 	mux.HandleFunc("/get", func(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"args": map[string]string{},
+			"args":    map[string]string{},
 			"headers": r.Header,
-			"origin": "127.0.0.1",
-			"url": "http://localhost/get",
+			"origin":  "127.0.0.1",
+			"url":     "http://localhost/get",
 		})
 	})
 
@@ -51,42 +51,42 @@ func setupTestServer() *httptest.Server {
 			return
 		}
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"args": map[string]string{},
-			"data": "",
-			"files": map[string]string{},
-			"form": r.PostForm,
+			"args":    map[string]string{},
+			"data":    "",
+			"files":   map[string]string{},
+			"form":    r.PostForm,
 			"headers": r.Header,
-			"json": nil,
-			"origin": "127.0.0.1",
-			"url": "http://localhost/post",
+			"json":    nil,
+			"origin":  "127.0.0.1",
+			"url":     "http://localhost/post",
 		})
 	})
 
 	// PUT handler
 	mux.HandleFunc("/put", func(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"args": map[string]string{},
-			"data": "",
-			"files": map[string]string{},
-			"form": map[string]string{},
+			"args":    map[string]string{},
+			"data":    "",
+			"files":   map[string]string{},
+			"form":    map[string]string{},
 			"headers": r.Header,
-			"json": nil,
-			"origin": "127.0.0.1",
-			"url": "http://localhost/put",
+			"json":    nil,
+			"origin":  "127.0.0.1",
+			"url":     "http://localhost/put",
 		})
 	})
 
 	// DELETE handler
 	mux.HandleFunc("/delete", func(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]interface{}{
-			"args": map[string]string{},
-			"data": "",
-			"files": map[string]string{},
-			"form": map[string]string{},
+			"args":    map[string]string{},
+			"data":    "",
+			"files":   map[string]string{},
+			"form":    map[string]string{},
 			"headers": r.Header,
-			"json": nil,
-			"origin": "127.0.0.1",
-			"url": "http://localhost/delete",
+			"json":    nil,
+			"origin":  "127.0.0.1",
+			"url":     "http://localhost/delete",
 		})
 	})
 
@@ -99,7 +99,7 @@ func setupTestServer() *httptest.Server {
 		}
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"authenticated": true,
-			"user": user,
+			"user":          user,
 		})
 	})
 
@@ -113,7 +113,7 @@ func setupTestServer() *httptest.Server {
 	// Cookie handlers
 	mux.HandleFunc("/cookies/set", func(w http.ResponseWriter, r *http.Request) {
 		http.SetCookie(w, &http.Cookie{
-			Name: "k1",
+			Name:  "k1",
 			Value: r.URL.Query().Get("k1"),
 		})
 		http.Redirect(w, r, "/cookies", http.StatusFound)
@@ -138,10 +138,10 @@ func TestMain(m *testing.M) {
 	// Setup
 	ts = setupTestServer()
 	defer ts.Close()
-	
+
 	// Run tests
 	code := m.Run()
-	
+
 	// Exit
 	os.Exit(code)
 }
@@ -247,7 +247,7 @@ func TestWithCookie(t *testing.T) {
 }
 
 func TestWithBasicAuth(t *testing.T) {
-	str, err := Get(ts.URL + "/basic-auth/user/passwd").SetBasicAuth("user", "passwd").String()
+	str, err := Get(ts.URL+"/basic-auth/user/passwd").SetBasicAuth("user", "passwd").String()
 	if err != nil {
 		t.Fatal(err)
 	}
