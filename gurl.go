@@ -35,7 +35,7 @@ import (
 )
 
 const (
-	version              = "0.2.3"
+	version              = "0.3.0"
 	printReqHeader uint8 = 1 << (iota - 1)
 	printReqBody
 	printRespHeader
