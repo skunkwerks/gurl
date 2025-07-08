@@ -6,7 +6,7 @@ testing, debugging, and generally interacting with HTTP servers.
 Forked from [bat](https://github.com/astaxie/bat), as bugs weren't being
 fixed. Profound thanks for their contributions! Inspired by
 [httpie](https://github.com/jakubroztocil/httpie). Thanks to the author,
-Jakub.
+Jakub, for the idea and the original implementation.
 
 ![](images/logo.png)
 
