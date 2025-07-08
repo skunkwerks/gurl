@@ -409,11 +409,27 @@ HMAC:
 
 ITEM:
   Can be any of:
-    Query string   key=value
-    Header         key:value
-    Post data      key=value
-    JSON data      key:=value
-    File upload    key@/path/file
+    Query string      key=value           (GET, or with -form)
+    Post data         key=value           (default; serialized as JSON)
+    Header            key:value
+    JSON data         key:=value          (raw JSON: numbers, bools, arrays, objects)
+    Data from file    key=@/path/file     (value read from file)
+    JSON from file    key:=@/path/file    (raw JSON read from file)
+    File upload       key@/path/file      (only with -form)
+
+  Separator precedence: the *first* separator in an argument wins, with
+  longer separators preferred at the same position (so := beats :).
+  Values may freely contain separator characters that appear after the
+  first one, e.g.  url=http://example.com/path  parses correctly.
+
+  Escape with backslash to suppress a separator's special meaning. The
+  backslash is stripped; only =, :, @, and \ are escapable:
+    foo\==bar         -> data field "foo=" with value "bar"
+    X\:Y:value        -> header "X:Y" with value "value"
+    data=\@notafile   -> data field with literal value "@notafile"
+  Backslashes before any other character are kept verbatim, so values
+  like  path=C:\Users\me  pass through unchanged. Use \\ for a literal
+  backslash next to a separator.
 
 Example:
 

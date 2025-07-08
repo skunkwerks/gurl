@@ -6,7 +6,7 @@ testing, debugging, and generally interacting with HTTP servers.
 Forked from [bat](https://github.com/astaxie/bat), as bugs weren't being
 fixed. Profound thanks for their contributions! Inspired by
 [httpie](https://github.com/jakubroztocil/httpie). Thanks to the author,
-Jakub.
+Jakub, for the idea and the original implementation.
 
 ![](images/logo.png)
 
@@ -162,11 +162,69 @@ type is distinguished only by the separator used: `:`, `=`, `:=`, `@`,
 |Form Fields from file `field=@file.txt`|read content from file as value|
 |Raw JSON fields `field:=json`, `field:=@file.json`|Useful when sending JSON and one or more fields need to be a Boolean, Number, nested Object, or an Array, e.g., meals:='["ham","spam"]' or pies:=[1,2,3] (note the quotes).|
 
-You can use `\` to escape characters that shouldn't be used as
-separators (or parts thereof). For instance, foo\==bar will become a
-data key/value pair (foo= and bar) instead of a URL parameter.
+### How separators are detected
 
-You can also quote values, e.g. `foo="bar baz"`.
+Each argument is classified by the **first** separator that appears in
+it, scanning left-to-right. When two separators start at the same
+position, the longer one wins (so `:=` is preferred over `:`). This
+means values may freely contain any separator character that occurs
+*after* the first one — no escaping is required:
+
+	url=http://example.com/path        # data field (= wins over :)
+	redirect=https://example.com/cb    # query param when method is GET
+	name="John:Doe"                    # data field; value is "John:Doe"
+	comment=look@me                    # data field; value is "look@me"
+	Authorization:Bearer abc:def:ghi   # header; value is "Bearer abc:def:ghi"
+
+### Escaping separators with `\`
+
+If you need a key that itself contains a separator character (or you
+want to suppress the special meaning of `@` at the start of a value),
+prefix the character with a backslash. The backslash is stripped from
+the emitted key/value:
+
+	foo\==bar                          # data field, key "foo=" value "bar"
+	X\:Y:value                         # header "X:Y" with value "value"
+	weird\:=value                      # data field "weird:" = "value"
+	                                   # (escapes the ":" so := isn't seen)
+	a\@b=c                             # data field "a@b" = "c" (form mode)
+	data=\@notafile                    # data field with literal value "@notafile"
+	                                   # (no file read)
+
+Only the four separator characters are escapable: `=`, `:`, `@`, and
+`\` itself. A backslash before any other byte is kept literally, so
+ordinary values pass through unchanged:
+
+	path=C:\Users\me                   # value is exactly C:\Users\me
+	tail=hello\                        # trailing backslash preserved
+
+To produce a literal backslash before a separator character, double it:
+
+	field=a\\=b                        # value is a\=b (NOT split on the =)
+
+### Quoting values
+
+Your shell's quoting rules still apply. To preserve spaces or quote
+characters, use shell quoting:
+
+	gurl POST example.org greeting="hello world"
+
+### Raw JSON validation
+
+Raw JSON values (`field:=value`) are validated at parse time. Malformed
+JSON is rejected with a clear message before any request is sent:
+
+	$ gurl POST example.org bad:='{not valid}'
+	invalid JSON for field "bad": {not valid}
+
+### Filenames beginning with `@`
+
+If a file referenced by `=@` or `:=@` has a name that itself begins with
+`@`, write the literal filename after the separator — only the
+separator's leading `@` is stripped:
+
+	gurl POST example.org data:=@@weird.json   # opens "@weird.json"
+
 ## JSON
 JSON is the lingua franca of modern web services and it is also the
 implicit content type gurl by default uses:
