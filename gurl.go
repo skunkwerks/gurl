@@ -58,6 +58,8 @@ var (
 	benchN           int
 	benchC           int
 	hmacEnv          string
+	forceIPv4        bool
+	forceIPv6        bool
 	isjson           = flag.Bool("json", true, "Send the data as a JSON object")
 	method           = flag.String("method", "GET", "HTTP method")
 	URL              = flag.String("url", "", "HTTP request URL")
@@ -86,6 +88,8 @@ func init() {
 	flag.IntVar(&benchC, "b.C", 100, "Number of requests to run concurrently.")
 	flag.StringVar(&body, "body", "", "Raw data send as body")
 	flag.StringVar(&hmacEnv, "hmac", "", "name of env var to retrieve HMAC details")
+	flag.BoolVar(&forceIPv4, "4", false, "Resolve URL hostname to IPv4 only")
+	flag.BoolVar(&forceIPv6, "6", false, "Resolve URL hostname to IPv6 only")
 	jsonmap = make(map[string]interface{})
 }
 
@@ -133,6 +137,15 @@ func main() {
 		// Disable wall-clock timeout for downloads so large/slow
 		// transfers aren't killed mid-stream.
 		defaultSetting.Timeout = 0
+	}
+	if forceIPv4 && forceIPv6 {
+		log.Fatal("-4 and -6 are mutually exclusive")
+	}
+	if forceIPv4 {
+		defaultSetting.Network = "tcp4"
+	}
+	if forceIPv6 {
+		defaultSetting.Network = "tcp6"
 	}
 
 	// read stdin into memory in single pass
@@ -384,6 +397,8 @@ flags:
   -p, -pretty=true            Print JSON Pretty Format
   -i, -insecure=false         Allow connections to SSL sites without certs
   -proxy=PROXY_URL            Proxy with host and port
+  -4=false                    Resolve URL hostname to IPv4 only
+  -6=false                    Resolve URL hostname to IPv6 only
   -print="..."                String specifying what the output should
                               contain, default will print all information.
          "A" all request & response headers and bodies

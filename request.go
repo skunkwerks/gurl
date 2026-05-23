@@ -19,6 +19,7 @@ package main
 import (
 	"bytes"
 	"compress/gzip"
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"io"
@@ -43,7 +44,8 @@ type Settings struct {
 	Timeout         time.Duration // 0 = no timeout
 	DumpBody        bool
 	ShowDebug       bool
-	Gzip            bool // decode gzip responses
+	Gzip            bool   // decode gzip responses
+	Network         string // dial network: "", "tcp", "tcp4", "tcp6"
 }
 
 // Request is a fluent builder for a single HTTP request.
@@ -309,10 +311,23 @@ func (r *Request) SendOut() (*http.Response, error) {
 	if tlsCfg.MinVersion == 0 {
 		tlsCfg.MinVersion = tls.VersionTLS12
 	}
+	dialer := &net.Dialer{Timeout: 30 * time.Second}
+	dialContext := dialer.DialContext
+	switch r.setting.Network {
+	case "tcp4", "tcp6":
+		forced := r.setting.Network
+		dialContext = func(ctx context.Context, network, addr string) (net.Conn, error) {
+			// Force IPv4/IPv6 regardless of what http.Transport requests.
+			if network == "tcp" || network == "tcp4" || network == "tcp6" {
+				network = forced
+			}
+			return dialer.DialContext(ctx, network, addr)
+		}
+	}
 	tr := &http.Transport{
 		TLSClientConfig:   tlsCfg,
 		Proxy:             r.setting.Proxy,
-		DialContext:       (&net.Dialer{Timeout: 30 * time.Second}).DialContext,
+		DialContext:       dialContext,
 		ForceAttemptHTTP2: true,
 	}
 	client := &http.Client{

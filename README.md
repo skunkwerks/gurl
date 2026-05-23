@@ -24,6 +24,7 @@ Jakub, for the idea and the original implementation.
 - [Authentication](#authentication)
 - [Signatures](#signatures)
 - [Proxies](#proxies)
+- [IP version](#ip-version)
 
 ## Main Features
 
@@ -417,3 +418,11 @@ In your ~/.bash_profile:
 	export HTTP_PROXY=http://10.10.1.10:3128
 	export HTTPS_PROXY=https://10.10.1.10:1080
 	export NO_PROXY=localhost,example.com
+
+# IP version
+
+By default gurl lets the resolver pick whichever address family the OS
+prefers. Force a specific family with `-4` or `-6`:
+
+	$ gurl -4 example.org           # IPv4 only
+	$ gurl -6 example.org           # IPv6 only

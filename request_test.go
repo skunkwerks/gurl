@@ -249,6 +249,38 @@ func TestRequestTLSMinVersion(t *testing.T) {
 	}
 }
 
+func TestRequestForceIPv4(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("ok"))
+	}))
+	defer srv.Close()
+
+	// httptest binds to 127.0.0.1, so tcp4 must succeed.
+	req := NewRequest(srv.URL+"/", "GET").Setting(Settings{Network: "tcp4"})
+	res, err := req.Response()
+	if err != nil {
+		t.Fatalf("tcp4 dial failed: %v", err)
+	}
+	if res.StatusCode != 200 {
+		t.Errorf("status = %d, want 200", res.StatusCode)
+	}
+}
+
+func TestRequestForceIPv6FailsOnIPv4Server(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {}))
+	defer srv.Close()
+
+	// Server listens on 127.0.0.1 (IPv4 only); forcing tcp6 must fail
+	// because the literal address has no IPv6 form.
+	req := NewRequest(srv.URL+"/", "GET").Setting(Settings{
+		Network: "tcp6",
+		Timeout: 2 * time.Second,
+	})
+	if _, err := req.Response(); err == nil {
+		t.Fatal("expected dial error forcing IPv6 against IPv4-only server, got nil")
+	}
+}
+
 func TestRequestSignBody(t *testing.T) {
 	var gotBody []byte
 	var gotSig string
