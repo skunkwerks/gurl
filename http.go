@@ -13,11 +13,13 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/skunkwerks/gurl/version"
 )
 
 var defaultSetting = Settings{
 	ShowDebug: true,
-	UserAgent: "gurl/" + version,
+	UserAgent: "gurl/" + version.Version,
 	Timeout:   60 * time.Second,
 	Gzip:      true,
 	DumpBody:  true,

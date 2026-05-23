@@ -4,11 +4,12 @@ PREFIX?=	/usr/local
 BINDIR?=	${PREFIX}/bin
 
 PROG=		gurl
+MODULE=		github.com/skunkwerks/gurl
 
 all: test build
 
 build: ${SRCS}
-	${GO} build ${GOFLAGS} -o ${PROG}
+	${GO} build ${GOFLAGS} -ldflags "-s -X ${MODULE}/version.Version=$$(git describe --tags --always --dirty)" -o ${PROG}
 
 test: fmt vet
 	${GO} test -count=1 ./...

@@ -33,11 +33,11 @@ import (
 	"strings"
 
 	"github.com/skunkwerks/gurl/hamac"
+	"github.com/skunkwerks/gurl/version"
 )
 
 const (
-	version              = "0.3.0"
-	printReqHeader uint8 = 1 << (iota - 1)
+	printReqHeader uint8 = 1 << iota
 	printReqBody
 	printRespHeader
 	printRespBody
@@ -125,7 +125,9 @@ func main() {
 	}
 
 	if ver {
-		fmt.Println("Version:", version)
+		fmt.Println("gurl", version.Version)
+		fmt.Println("Copyright 2015-2026 SkunkWerks, GmbH.")
+		fmt.Println("https://skunkwerks.at/")
 		os.Exit(2)
 	}
 
