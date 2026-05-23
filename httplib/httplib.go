@@ -271,6 +271,24 @@ func (b *BeegoHttpRequest) PostFile(formname, filename string) *BeegoHttpRequest
 	return b
 }
 
+// Params returns the accumulated query/form parameters (read-only view).
+func (b *BeegoHttpRequest) Params() map[string]string {
+	out := make(map[string]string, len(b.params))
+	for k, v := range b.params {
+		out[k] = v
+	}
+	return out
+}
+
+// Files returns the accumulated form-file uploads (read-only view).
+func (b *BeegoHttpRequest) Files() map[string]string {
+	out := make(map[string]string, len(b.files))
+	for k, v := range b.files {
+		out[k] = v
+	}
+	return out
+}
+
 // SignBody calculates the HMAC and appends the header to the request
 // The body is re-injected into the request as ReadAll consumes it.
 func (b *BeegoHttpRequest) SignBody(mac hamac.Hmac) *BeegoHttpRequest {
