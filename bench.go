@@ -10,8 +10,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/skunkwerks/gurl/httplib"
 )
 
 type result struct {
@@ -21,7 +19,7 @@ type result struct {
 	contentLength int64
 }
 
-func RunBench(b *httplib.BeegoHttpRequest) {
+func RunBench(b *Request) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	start := time.Now()
 	results := make(chan *result, benchN)
@@ -44,7 +42,7 @@ func RunBench(b *httplib.BeegoHttpRequest) {
 	close(results)
 }
 
-func worker(wg *sync.WaitGroup, ch chan int, results chan *result, b *httplib.BeegoHttpRequest) {
+func worker(wg *sync.WaitGroup, ch chan int, results chan *result, b *Request) {
 	for _ = range ch {
 		s := time.Now()
 		code := 0

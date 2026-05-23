@@ -13,17 +13,14 @@ import (
 	"regexp"
 	"strings"
 	"time"
-
-	"github.com/skunkwerks/gurl/httplib"
 )
 
-var defaultSetting = httplib.BeegoHttpSettings{
-	ShowDebug:        true,
-	UserAgent:        "gurl/" + version,
-	ConnectTimeout:   60 * time.Second,
-	ReadWriteTimeout: 60 * time.Second,
-	Gzip:             true,
-	DumpBody:         true,
+var defaultSetting = Settings{
+	ShowDebug: true,
+	UserAgent: "gurl/" + version,
+	Timeout:   60 * time.Second,
+	Gzip:      true,
+	DumpBody:  true,
 }
 
 // argKind classifies a CLI argument by the separator that links its key
@@ -154,8 +151,8 @@ func unescape(s string) string {
 	return b.String()
 }
 
-func getHTTP(method string, url string, args []string) (r *httplib.BeegoHttpRequest) {
-	r = httplib.NewBeegoRequest(url, method)
+func getHTTP(method string, url string, args []string) (r *Request) {
+	r = NewRequest(url, method)
 	r.Setting(defaultSetting)
 	r.Header("Accept-Encoding", "gzip, deflate")
 	if *isjson {
@@ -225,7 +222,7 @@ func getHTTP(method string, url string, args []string) (r *httplib.BeegoHttpRequ
 	return
 }
 
-func formatResponseBody(res *http.Response, httpreq *httplib.BeegoHttpRequest, pretty bool) string {
+func formatResponseBody(res *http.Response, httpreq *Request, pretty bool) string {
 	body, err := httpreq.Bytes()
 	if err != nil {
 		log.Fatalln("can't get the url", err)

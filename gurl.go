@@ -129,6 +129,11 @@ func main() {
 	if printOption&printReqBody != printReqBody {
 		defaultSetting.DumpBody = false
 	}
+	if download {
+		// Disable wall-clock timeout for downloads so large/slow
+		// transfers aren't killed mid-stream.
+		defaultSetting.Timeout = 0
+	}
 
 	// read stdin into memory in single pass
 	var stdin []byte
