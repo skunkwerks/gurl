@@ -18,7 +18,7 @@
 //
 // import "github.com/astaxie/beego/httplib"
 //
-//		b := httplib.Post("http://beego.me/")
+//		b := httplib.Post("http://example.net/")
 //		b.Param("username","astaxie")
 //		b.Param("password","123456")
 //		b.PostFile("uploadfile1", "httplib.pdf")
@@ -54,7 +54,7 @@ import (
 	"github.com/skunkwerks/gurl/hamac"
 )
 
-var defaultSetting = BeegoHttpSettings{false, "beegoServer", 60 * time.Second, 60 * time.Second, nil, nil, nil, false, true, true}
+var defaultSetting = BeegoHttpSettings{false, "skunkwerks", 60 * time.Second, 60 * time.Second, nil, nil, nil, false, true, true}
 var defaultCookieJar http.CookieJar
 var settingMutex sync.Mutex
 

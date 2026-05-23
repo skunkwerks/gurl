@@ -8,7 +8,7 @@ you can use Get to crawl data.
 
 	import "github.com/astaxie/beego/httplib"
 	
-	str, err := httplib.Get("http://beego.me/").String()
+	str, err := httplib.Get("http://example.net/").String()
 	if err != nil {
         	// error
 	}
@@ -17,7 +17,7 @@ you can use Get to crawl data.
 ## POST
 POST data to remote url
 
-	req := httplib.Post("http://beego.me/")
+	req := httplib.Post("http://example.net/")
 	req.Param("username","astaxie")
 	req.Param("password","123456")
 	str, err := req.String()
@@ -35,21 +35,21 @@ The default timeout is `60` seconds, function prototype:
 Exmaple:
 
 	// GET
-	httplib.Get("http://beego.me/").SetTimeout(100 * time.Second, 30 * time.Second)
+	httplib.Get("http://example.net/").SetTimeout(100 * time.Second, 30 * time.Second)
 	
 	// POST
-	httplib.Post("http://beego.me/").SetTimeout(100 * time.Second, 30 * time.Second)
+	httplib.Post("http://example.net/").SetTimeout(100 * time.Second, 30 * time.Second)
 
 
 ## Debug
 
 If you want to debug the request info, set the debug on
 
-	httplib.Get("http://beego.me/").Debug(true)
+	httplib.Get("http://example.net/").Debug(true)
 	
 ## Set HTTP Basic Auth
 
-	str, err := Get("http://beego.me/").SetBasicAuth("user", "passwd").String()
+	str, err := Get("http://example.net/").SetBasicAuth("user", "passwd").String()
 	if err != nil {
         	// error
 	}
@@ -67,7 +67,7 @@ More info about the `tls.Config` please visit http://golang.org/pkg/crypto/tls/#
 
 some servers need to specify the protocol version of HTTP
 
-	httplib.Get("http://beego.me/").SetProtocolVersion("HTTP/1.1")
+	httplib.Get("http://example.net/").SetProtocolVersion("HTTP/1.1")
 	
 ## Set Cookie
 
@@ -76,13 +76,13 @@ some http request need setcookie. So set it like this:
 	cookie := &http.Cookie{}
 	cookie.Name = "username"
 	cookie.Value  = "astaxie"
-	httplib.Get("http://beego.me/").SetCookie(cookie)
+	httplib.Get("http://example.net/").SetCookie(cookie)
 
 ## Upload file
 
 httplib support mutil file upload, use `req.PostFile()`
 
-	req := httplib.Post("http://beego.me/")
+	req := httplib.Post("http://example.net/")
 	req.Param("username","astaxie")
 	req.PostFile("uploadfile1", "httplib.pdf")
 	str, err := req.String()

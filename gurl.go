@@ -433,7 +433,7 @@ ITEM:
 
 Example:
 
-	gurl beego.me
+	gurl example.net
 
 For more help & information please refer to https://github.com/skunkwerks/gurl
 `

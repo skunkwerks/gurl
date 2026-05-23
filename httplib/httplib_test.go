@@ -259,7 +259,7 @@ func TestWithBasicAuth(t *testing.T) {
 }
 
 func TestWithUserAgent(t *testing.T) {
-	v := "beego"
+	v := "skunkwerks"
 	str, err := Get(ts.URL + "/headers").SetUserAgent(v).String()
 	if err != nil {
 		t.Fatal(err)
@@ -273,7 +273,7 @@ func TestWithUserAgent(t *testing.T) {
 }
 
 func TestWithSetting(t *testing.T) {
-	v := "beego"
+	v := "skunkwerks"
 	var setting BeegoHttpSettings
 	setting.EnableCookie = true
 	setting.UserAgent = v
@@ -317,7 +317,7 @@ func TestToJson(t *testing.T) {
 }
 
 func TestToFile(t *testing.T) {
-	f := "beego_testfile"
+	f := "skunkwerks_testfile"
 	req := Get(ts.URL + "/ip")
 	err := req.ToFile(f)
 	if err != nil {
