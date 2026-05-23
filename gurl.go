@@ -363,10 +363,10 @@ func main() {
 	}
 }
 
-var usageinfo string = `gurl is a Go implemented CLI cURL-like tool for humans,
-originally developed by https://github.com/astaxie/bat but forked to
-pick up critical JSON and header related patches, and avoid conflicting
-with other common tools, also named bat.
+var usageinfo string = `gurl is a Go implemented CLI cURL-like tool for humans, originally
+developed as https://github.com/astaxie/bat but forked to pick up
+critical JSON and header related patches, and avoid conflicting
+with another common text-processing tool, also named bat.
 
 Usage:
 
