@@ -12,4 +12,4 @@
 package version
 
 // Version is the semantic release version, without any leading "v".
-var Version = "1.0.0"
+var Version = "1.2.0"

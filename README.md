@@ -14,6 +14,7 @@ Jakub, for the idea and the original implementation.
 
 - [Main Features](#main-features)
 - [Installation](#installation)
+- [Man page](#man-page)
 - [Usage](#usage)
 - [HTTP Method](#http-method)
 - [Request URL](#request-url)
@@ -40,6 +41,23 @@ Jakub, for the idea and the original implementation.
 	go install -v github.com/skunkwerks/gurl@latest
 	
 make sure the `$GOPATH/bin` is added into `$PATH`
+
+## Man page
+
+gurl writes its own man page. The page is generated from the flag table,
+so it always matches the binary.
+
+	$ gurl -man
+
+The `make man` target writes the same page to `gurl.1`. `make install-man`
+installs it under `share/man/man1`. The FreeBSD port installs it by
+default.
+
+## CI
+
+Changes are built and tested on Ubuntu and FreeBSD on every pull request
+and push to `main`. The FreeBSD job runs in a virtual machine and also
+checks that the man page lints clean with `mandoc`.
 
 ## Usage
 
