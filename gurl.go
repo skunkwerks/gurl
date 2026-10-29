@@ -45,6 +45,7 @@ const (
 
 var (
 	ver              bool
+	man              bool
 	form             bool
 	pretty           bool
 	download         bool
@@ -68,8 +69,10 @@ var (
 )
 
 func init() {
+	flag.BoolVar(isjson, "j", true, "Send the data in a JSON object as application/json")
 	flag.BoolVar(&ver, "v", false, "Print Version Number")
 	flag.BoolVar(&ver, "version", false, "Print Version Number")
+	flag.BoolVar(&man, "man", false, "Print the manual page and exit")
 	flag.BoolVar(&pretty, "pretty", true, "Print JSON Pretty Format")
 	flag.BoolVar(&pretty, "p", true, "Print JSON Pretty Format")
 	flag.StringVar(&printV, "print", "A", "Print request and response")
@@ -129,6 +132,11 @@ func main() {
 		fmt.Println("Copyright 2015-2026 SkunkWerks, GmbH.")
 		fmt.Println("https://skunkwerks.at/")
 		os.Exit(2)
+	}
+
+	if man {
+		printMan()
+		return
 	}
 
 	parsePrintOption(printV)
@@ -409,6 +417,7 @@ flags:
          "h" response headers
          "b" response body
   -v, -version=true           Show Version Number
+  -man                        Print the manual page (mdoc) and exit
 
 METHOD:
   gurl defaults to either GET (if there is no request data) or POST
