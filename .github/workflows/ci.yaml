@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    name: Test
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.27"
+          cache: true
+
+      - name: Build
+        run: make build
+
+      - name: Test
+        run: make test
+
+  freebsd:
+    runs-on: ubuntu-latest
+    name: FreeBSD
+    steps:
+      - name: Build and test in a FreeBSD VM
+        uses: acj/freebsd-firecracker-action@v0.12.0
+        with:
+          run-in-vm: |
+            uname -a
+            pkg install -y go
+
+            cd firecracker-freebsd
+            make build
+            make test
+            ./gurl -man | mandoc -Tlint
